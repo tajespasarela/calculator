@@ -3,3 +3,14 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components {
+  .shadow-3d {
+    box-shadow: inset 2px 2px 0px theme('colors.zinc.500'),
+      inset -2px -2px 0px theme('colors.zinc.900');
+  }
+  .shadow-3d-pressed {
+    box-shadow: inset 2px 2px 0px theme('colors.zinc.900'),
+      inset -2px -2px 0px theme('colors.zinc.500');
+  }
+}

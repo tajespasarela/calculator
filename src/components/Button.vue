@@ -1,17 +1,24 @@
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-facing-decorator'
+import { Vue, Component, Prop } from 'vue-facing-decorator';
 
 @Component
 export default class Button extends Vue {
-  @Prop({ default: false }) public operation!: Boolean
+  @Prop() public operation!: string;
+
+  get classByOperation(): string {
+    return this.operation === '='
+      ? 'bg-orange-500/60'
+      : Number.isInteger(Number(this.operation))
+      ? 'bg-slate-800'
+      : 'bg-slate-900';
+  }
 }
 </script>
 
 <template>
   <button
-    class="border border-slate-400 rounded-md min-w-12 min-h-[3rem] text-neutral-100 flex-1"
-    :class="operation ? 'bg-slate-800' : 'bg-slate-900'"
+    class="min-w-12 shadow-3d active:shadow-3d-pressed min-h-[3rem] flex-1 rounded-md border-4 border-black bg-gradient-to-br from-neutral-900 to-zinc-700 text-neutral-100"
   >
-    <slot />
+    {{ operation }}
   </button>
 </template>

@@ -1,48 +1,47 @@
 <script lang="ts">
-import { Vue, Component } from 'vue-facing-decorator'
-import Button from './Button.vue'
+import { Vue, Component } from 'vue-facing-decorator';
+import Button from './Button.vue';
+import Screen from './Screen.vue';
 
 @Component({
   components: {
-    Button
+    Button,
+    Screen
   }
 })
 export default class Calculator extends Vue {}
 </script>
 
 <template>
-  <main class="bg-slate-600 rounded-xl border border-slate-100 max-w-xs p-3 flex flex-col gap-4">
-    <input
-      class="p-5 bg-neutral-900 border border-neutral-500 rounded-md w-full h-14 font-digital text-neutral-50 text-right text-3xl"
-      type="text"
-      disabled
-      value="453456.3456"
-    />
+  <main
+    class="shadow-3d flex max-w-xs flex-col gap-4 rounded-xl border-4 border-black bg-gradient-to-br from-neutral-800 to-zinc-600 p-3"
+  >
+    <Screen />
 
-    <section id="Buttons" class="grid grid-cols-4 gap-4 justify-items-stretch items-stretch">
-      <Button>7</Button>
-      <Button>8</Button>
-      <Button>9</Button>
+    <section id="Buttons" class="grid grid-cols-4 items-stretch justify-items-stretch gap-4">
+      <Button operation="7" />
+      <Button operation="8" />
+      <Button operation="9" />
 
-      <Button operation="true">*</Button>
+      <Button operation="*" />
 
-      <Button operation>4</Button>
-      <Button>5</Button>
-      <Button>6</Button>
+      <Button operation="4" />
+      <Button operation="5" />
+      <Button operation="6" />
 
-      <Button operation="true">-</Button>
+      <Button operation="-" />
 
-      <Button>1</Button>
-      <Button>2</Button>
-      <Button>3</Button>
+      <Button operation="1" />
+      <Button operation="2" />
+      <Button operation="3" />
 
-      <Button operation="true">+</Button>
+      <Button operation="+" />
 
-      <Button operation="true">,</Button>
-      <Button>0</Button>
-      <Button class="bg-orange-500/60">=</Button>
+      <Button operation="," />
+      <Button operation="0" />
+      <Button operation="=" />
 
-      <Button operation="true">/</Button>
+      <Button operation="/" />
     </section>
   </main>
 </template>
