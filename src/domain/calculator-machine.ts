@@ -1,34 +1,39 @@
+import { isOperator } from './type-guards';
+
 export class CalculatorMachine {
   private output: Array<string | number> = [];
   private operators: Array<string> = [];
   private precedence = ['+-', '*', '/'];
 
-  get lastOperator(): string | undefined {
-    return this.operators[this.operators.length - 1];
+  private get lastOperator(): string | undefined {
+    return this.operators.at(-1);
   }
 
-  addExpresion(expression: string | number) {
-    if (this.isOperator(expression)) {
-      if (!this.lastOperator || this.isHigherPrecedence(expression, this.lastOperator)) {
-        this.operators.push(expression);
-      } else {
-        const removedLastOperator = this.operators.pop();
-        if (removedLastOperator) {
-          this.output.push(removedLastOperator);
+  private parseExpression(expression: Array<string | number>) {
+    expression.forEach((item) => {
+      if (isOperator(item)) {
+        if (!this.lastOperator || this.isHigherPrecedence(item, this.lastOperator)) {
+          this.operators.push(item);
+        } else {
+          const removedLastOperator = this.operators.pop();
+          if (removedLastOperator) {
+            this.output.push(removedLastOperator);
+          }
+          this.operators.push(item);
         }
-        this.operators.push(expression);
+      } else {
+        this.output.push(item);
       }
-    } else {
-      this.output.push(expression);
-    }
+    });
   }
 
-  resolve(): number {
+  resolve(expression: Array<string | number>): number {
+    this.parseExpression(expression);
     this.output.push(...this.operators.reverse());
     this.operators.length = 0;
 
     while (this.output.length !== 1) {
-      const firstOperatorIndex = this.output.findIndex(this.isOperator);
+      const firstOperatorIndex = this.output.findIndex(isOperator);
       const leftOperand = this.output[firstOperatorIndex - 2] as number;
       const rightOperand = this.output[firstOperatorIndex - 1] as number;
       const opeartor = this.output[firstOperatorIndex] as string;
@@ -42,10 +47,6 @@ export class CalculatorMachine {
     const result = this.output[0] as number;
     this.output.length = 0;
     return result;
-  }
-
-  private isOperator(expression: string | number): expression is string {
-    return typeof expression === 'string';
   }
 
   private isHigherPrecedence(operator1: string, operator2: string): boolean {
