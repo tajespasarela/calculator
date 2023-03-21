@@ -53,7 +53,7 @@ export class CalculatorService {
       rpnNotationExpression.splice(
         firstOperatorIndex - 2,
         3,
-        new Numeric(String(operator.operate(leftOperand, rightOperand)))
+        new Numeric(String(operator.operate(leftOperand, rightOperand)), true)
       );
     }
     return rpnNotationExpression;

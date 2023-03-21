@@ -22,7 +22,15 @@ export const equals = {
   displaySymbol: '=',
   keyboardBinding: 'Enter',
   modifyExpression(expression: ArithmeticExpression): ArithmeticExpression {
-    return calculatorService.resolve(expression);
+    const resultExpression = calculatorService.resolve(expression);
+    const result = resultExpression[0];
+    if (
+      isNumeric(result) &&
+      (isNaN(result.value) || Math.abs(result.value) === Number.POSITIVE_INFINITY)
+    ) {
+      throw new Error('Error');
+    }
+    return resultExpression;
   }
 };
 
@@ -64,6 +72,9 @@ export const squareRoot: Operation = {
   modifyExpression(expression: ArithmeticExpression): ArithmeticExpression {
     const lastElement = expression.at(-1);
     if (isNumeric(lastElement)) {
+      if (lastElement.value < 0) {
+        throw Error('Error');
+      }
       expression.pop();
       expression.push(new Numeric(String(Math.sqrt(lastElement.value))));
     }

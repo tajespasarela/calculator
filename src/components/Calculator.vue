@@ -1,4 +1,5 @@
 <script lang="ts">
+import { useCalculatorStore } from '@/stores/calculator.store';
 import { Vue, Component } from 'vue-facing-decorator';
 import Button from './Button.vue';
 import Screen from './Screen.vue';
@@ -30,8 +31,7 @@ import {
   squareRoot,
   memoryReturn,
   memoryAdd,
-  memorySubtract,
-  percentage
+  memorySubtract
 } from '@/domain/operations';
 
 @Component({
@@ -41,6 +41,7 @@ import {
   }
 })
 export default class Calculator extends Vue {
+  store = useCalculatorStore();
   buttons: Array<Operation | undefined> = [
     memoryReturn,
     memoryAdd,
@@ -77,7 +78,7 @@ export default class Calculator extends Vue {
 
 <template>
   <main
-    class="shadow-3d flex max-w-xs flex-col gap-4 rounded-xl border-4 border-black bg-gradient-to-br from-neutral-800 to-zinc-600 p-3"
+    class="shadow-3d flex w-80 flex-col gap-4 rounded-xl border-4 border-black bg-gradient-to-br from-neutral-800 to-zinc-600 p-3"
   >
     <Screen />
 
