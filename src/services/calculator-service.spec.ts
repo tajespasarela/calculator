@@ -1,10 +1,10 @@
+import { number2, number3, number5, number9 } from '@/domain/numerics';
 import {
   additionOperation,
   divisionOperation,
   multiplicationOperation
 } from '@/domain/binary-operations';
 import type { Numeric } from '@/domain/entities';
-import { number2, number3, number5, number9 } from '@/domain/numerics';
 import { describe, it, expect } from 'vitest';
 import { CalculatorService } from './calculator.service';
 
