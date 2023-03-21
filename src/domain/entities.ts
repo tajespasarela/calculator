@@ -1,4 +1,5 @@
 import { isBinaryOperation, isNumeric } from '@/domain/type-guards';
+import { MAX_SCREEN_CHARACTERS } from '@/stores/calculator.store';
 
 export type ArithmeticExpression = Array<BinaryOperation | Numeric>;
 
@@ -37,7 +38,7 @@ export class Numeric implements Operation {
   modifyExpression(expression: ArithmeticExpression): ArithmeticExpression {
     const lastElement = expression.at(-1);
     if (isNumeric(lastElement)) {
-      if (lastElement.displaySymbol.length < 16) {
+      if (lastElement.displaySymbol.length < MAX_SCREEN_CHARACTERS) {
         const newValue =
           lastElement.displaySymbol === '0' || lastElement.isResult
             ? this.displaySymbol

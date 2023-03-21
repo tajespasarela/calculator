@@ -2,6 +2,8 @@ import type { ArithmeticExpression, Operation } from '@/domain/entities';
 import { number0 } from '@/domain/numerics';
 import { defineStore } from 'pinia';
 
+
+export const MAX_SCREEN_CHARACTERS= 16;
 export const useCalculatorStore = defineStore('calculatorStore', {
   state() {
     return <CalculatorStoreState>{
