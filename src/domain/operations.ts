@@ -1,88 +1,12 @@
-import { CalculatorMachine } from './calculator-machine';
-import { isBinaryOperation, isNumeric } from './type-guards';
-
-export type ArithmeticExpression = Array<BinaryOperation | Numeric>;
-
-export interface Operation {
-  displaySymbol: string;
-  modifyExpression(expression: ArithmeticExpression): ArithmeticExpression;
-}
-
-export class BinaryOperation implements Operation {
-  constructor(
-    public displaySymbol: string,
-    public priority: number,
-    public operate: (operand1: Numeric, operand2: Numeric) => number
-  ) {}
-  modifyExpression(expression: ArithmeticExpression): ArithmeticExpression {
-    if (isBinaryOperation(expression.at(-1))) {
-      expression.pop();
-    }
-    expression.push(this);
-    return expression;
-  }
-}
-
-export const additionOperation = new BinaryOperation(
-  '+',
-  1,
-  (operand1: Numeric, operand2: Numeric) => operand1.value + operand2.value
-);
-
-export const substractionOperation = new BinaryOperation(
-  '-',
-  1,
-  (operand1: Numeric, operand2: Numeric) => operand1.value - operand2.value
-);
-
-export const multiplicationOperation = new BinaryOperation(
-  '×',
-  2,
-  (operand1: Numeric, operand2: Numeric) => operand1.value * operand2.value
-);
-
-export const divisionOperation = new BinaryOperation(
-  '÷',
-  3,
-  (operand1: Numeric, operand2: Numeric) => operand1.value / operand2.value
-);
-
-export class Numeric implements Operation {
-  constructor(public displaySymbol: string) {}
-
-  get value(): number {
-    return parseFloat(this.displaySymbol);
-  }
-
-  modifyExpression(expression: ArithmeticExpression): ArithmeticExpression {
-    const lastElement = expression.at(-1);
-    if (isNumeric(lastElement)) {
-      const newValue =
-        lastElement.displaySymbol === '0'
-          ? this.displaySymbol
-          : lastElement.displaySymbol + this.displaySymbol;
-      expression.pop();
-      expression.push(new Numeric(newValue));
-    } else {
-      expression.push(this);
-    }
-    return expression;
-  }
-}
-
-export const number0 = new Numeric('0');
-export const number1 = new Numeric('1');
-export const number2 = new Numeric('2');
-export const number3 = new Numeric('3');
-export const number4 = new Numeric('4');
-export const number5 = new Numeric('5');
-export const number6 = new Numeric('6');
-export const number7 = new Numeric('7');
-export const number8 = new Numeric('8');
-export const number9 = new Numeric('9');
+import { type Operation, type ArithmeticExpression, Numeric } from '@/domain/entities';
+import { number0 } from '@/domain/numerics';
+import { CalculatorService } from '@/services/calculator.service';
+import { ref } from 'vue';
+import { isNumeric } from './type-guards';
 
 export const decimalPoint: Operation = {
   displaySymbol: '.',
+  keyboardBinding: '.',
   modifyExpression(expression: ArithmeticExpression): ArithmeticExpression {
     const lastElement = expression.at(-1);
     if (isNumeric(lastElement) && !lastElement.displaySymbol.includes('.')) {
@@ -93,17 +17,92 @@ export const decimalPoint: Operation = {
   }
 };
 
-const calculatorMachine = new CalculatorMachine();
+const calculatorService = new CalculatorService();
 export const equals = {
   displaySymbol: '=',
+  keyboardBinding: 'Enter',
   modifyExpression(expression: ArithmeticExpression): ArithmeticExpression {
-    return calculatorMachine.resolve(expression);
+    return calculatorService.resolve(expression);
   }
 };
 
-export const clear: Operation = {
-  displaySymbol: 'C',
+export const clearAll: Operation = {
+  displaySymbol: 'AC',
+  keyboardBinding: 'Delete',
   modifyExpression(_: ArithmeticExpression): ArithmeticExpression {
     return [number0];
+  }
+};
+export const clear: Operation = {
+  displaySymbol: 'C',
+  keyboardBinding: 'Backspace',
+  modifyExpression(expression: ArithmeticExpression): ArithmeticExpression {
+    expression.pop();
+    if (expression.length === 0) {
+      expression.push(number0);
+    }
+    return expression;
+  }
+};
+
+export const negative: Operation = {
+  displaySymbol: '+/-',
+  keyboardBinding: 'i',
+  modifyExpression(expression: ArithmeticExpression): ArithmeticExpression {
+    const lastElement = expression.at(-1);
+    if (isNumeric(lastElement)) {
+      expression.pop();
+      expression.push(new Numeric(String(lastElement.value * -1)));
+    }
+    return expression;
+  }
+};
+
+export const squareRoot: Operation = {
+  displaySymbol: '√ ',
+  keyboardBinding: 'r',
+  modifyExpression(expression: ArithmeticExpression): ArithmeticExpression {
+    const lastElement = expression.at(-1);
+    if (isNumeric(lastElement)) {
+      expression.pop();
+      expression.push(new Numeric(String(Math.sqrt(lastElement.value))));
+    }
+    return expression;
+  }
+};
+
+export const memory = ref(0);
+export const memoryAdd: Operation = {
+  displaySymbol: 'M+',
+  keyboardBinding: 'a',
+  modifyExpression(expression: ArithmeticExpression): ArithmeticExpression {
+    const lastElement = expression.at(-1);
+    if (isNumeric(lastElement)) {
+      memory.value += lastElement.value;
+    }
+    return expression;
+  }
+};
+export const memorySubtract: Operation = {
+  displaySymbol: 'M-',
+  keyboardBinding: 's',
+  modifyExpression(expression: ArithmeticExpression): ArithmeticExpression {
+    const lastElement = expression.at(-1);
+    if (isNumeric(lastElement)) {
+      memory.value -= lastElement.value;
+    }
+    return expression;
+  }
+};
+export const memoryReturn: Operation = {
+  displaySymbol: 'MRC',
+  keyboardBinding: 'm',
+  modifyExpression(expression: ArithmeticExpression): ArithmeticExpression {
+    const lastElement = expression.at(-1);
+    if (isNumeric(lastElement)) {
+      expression.pop();
+    }
+    expression.push(new Numeric(String(memory.value)));
+    return expression;
   }
 };

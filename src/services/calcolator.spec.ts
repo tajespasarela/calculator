@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { CalculatorMachine } from './calculator-machine';
+import { CalculatorService } from './calculator.service';
 import {
   Numeric,
   additionOperation,
@@ -11,7 +11,7 @@ import {
 
 describe('Testing calculatorMachine', () => {
   it('Keeps the operators precedence', () => {
-    const calculator = new CalculatorMachine();
+    const calculator = new CalculatorService();
 
     expect(
       (

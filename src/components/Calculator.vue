@@ -3,13 +3,13 @@ import { Vue, Component } from 'vue-facing-decorator';
 import Button from './Button.vue';
 import Screen from './Screen.vue';
 import {
-  type Operation,
-  multiplicationOperation,
-  substractionOperation,
   additionOperation,
   divisionOperation,
-  decimalPoint,
-  equals,
+  multiplicationOperation,
+  subtractionOperation
+} from '@/domain/binary-operations';
+import type { Operation } from '@/domain/entities';
+import {
   number0,
   number1,
   number2,
@@ -19,8 +19,19 @@ import {
   number6,
   number7,
   number8,
-  number9,
-  clear
+  number9
+} from '@/domain/numerics';
+import {
+  decimalPoint,
+  equals,
+  clear,
+  clearAll,
+  negative,
+  squareRoot,
+  memoryReturn,
+  memoryAdd,
+  memorySubtract,
+  percentage
 } from '@/domain/operations';
 
 @Component({
@@ -31,10 +42,15 @@ import {
 })
 export default class Calculator extends Vue {
   buttons: Array<Operation | undefined> = [
+    memoryReturn,
+    memoryAdd,
+    memorySubtract,
+    undefined,
+
     clear,
-    undefined,
-    undefined,
-    undefined,
+    clearAll,
+    negative,
+    squareRoot,
 
     number7,
     number8,
@@ -49,7 +65,7 @@ export default class Calculator extends Vue {
     number1,
     number2,
     number3,
-    substractionOperation,
+    subtractionOperation,
 
     decimalPoint,
     number0,

@@ -1,17 +1,16 @@
+import type { ArithmeticExpression, Operation } from '@/domain/entities';
+import { number0 } from '@/domain/numerics';
 import { defineStore } from 'pinia';
-import { isNumeric } from '@/domain/type-guards';
-import type { ArithmeticExpression, Operation } from '@/domain/operations';
-import { number0 } from '@/domain/operations';
 
 export const useCalculatorStore = defineStore('calculatorStore', {
   state() {
-    return <CaculatorStoreState>{
+    return <CalculatorStoreState>{
       expression: [number0]
     };
   },
   getters: {
-    screenValue: ({ expression }) =>
-      expression.filter((item) => isNumeric(item)).at(-1)?.displaySymbol
+    screenValue: ({ expression }) => expression.at(-1)?.displaySymbol,
+    stringExpression: ({ expression }) => expression.map((item) => item.displaySymbol)
   },
   actions: {
     addOperation(operation: Operation): void {
@@ -20,6 +19,6 @@ export const useCalculatorStore = defineStore('calculatorStore', {
   }
 });
 
-export interface CaculatorStoreState {
+export interface CalculatorStoreState {
   expression: ArithmeticExpression;
 }
