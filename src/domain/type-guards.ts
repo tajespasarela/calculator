@@ -1,5 +1,10 @@
-import type { BinaryOperator, Numeric } from './operations.types';
+import { Numeric, type BinaryOperation } from './operations';
 
-export function isOperator(item: BinaryOperator | Numeric): item is BinaryOperator {
-  return (item as any).calculate !== undefined;
+export function isBinaryOperation(
+  operation?: BinaryOperation | Numeric
+): operation is BinaryOperation {
+  return !(operation instanceof Numeric);
+}
+export function isNumeric(operation?: BinaryOperation | Numeric): operation is Numeric {
+  return operation instanceof Numeric;
 }

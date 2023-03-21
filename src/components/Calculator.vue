@@ -3,12 +3,25 @@ import { Vue, Component } from 'vue-facing-decorator';
 import Button from './Button.vue';
 import Screen from './Screen.vue';
 import {
-  substractionOperator,
-  type BinaryOperator,
-  type Numeric,
-  additionOperator
-} from '@/domain/operations.types';
-import { divisionOperator, multiplicationOperator } from '@/domain/operations';
+  type Operation,
+  multiplicationOperation,
+  substractionOperation,
+  additionOperation,
+  divisionOperation,
+  decimalPoint,
+  equals,
+  number0,
+  number1,
+  number2,
+  number3,
+  number4,
+  number5,
+  number6,
+  number7,
+  number8,
+  number9,
+  clear
+} from '@/domain/operations';
 
 @Component({
   components: {
@@ -17,26 +30,31 @@ import { divisionOperator, multiplicationOperator } from '@/domain/operations';
   }
 })
 export default class Calculator extends Vue {
-  buttons: Array<Numeric | BinaryOperator> = [
-    { displaySymbol: '7', value: 7 },
-    { displaySymbol: '8', value: 8 },
-    { displaySymbol: '9', value: 9 },
-    multiplicationOperator,
+  buttons: Array<Operation | undefined> = [
+    clear,
+    undefined,
+    undefined,
+    undefined,
 
-    { displaySymbol: '4', value: 4 },
-    { displaySymbol: '5', value: 5 },
-    { displaySymbol: '6', value: 6 },
-    divisionOperator,
+    number7,
+    number8,
+    number9,
+    multiplicationOperation,
 
-    { displaySymbol: '1', value: 1 },
-    { displaySymbol: '2', value: 2 },
-    { displaySymbol: '3', value: 3 },
-    substractionOperator,
+    number4,
+    number5,
+    number6,
+    divisionOperation,
 
-    { displaySymbol: '7', value: 7 },
-    { displaySymbol: '7', value: 7 },
-    { displaySymbol: '7', value: 7 },
-    additionOperator
+    number1,
+    number2,
+    number3,
+    substractionOperation,
+
+    decimalPoint,
+    number0,
+    equals,
+    additionOperation
   ];
 }
 </script>
@@ -47,8 +65,11 @@ export default class Calculator extends Vue {
   >
     <Screen />
 
-    <section id="Buttons" class="grid grid-cols-4 items-stretch justify-items-stretch gap-4">
-      <Button v-for="item in buttons" :item="item" :key="item.displaySymbol" />
+    <section id="buttons" class="grid grid-cols-4 items-stretch justify-items-stretch gap-4">
+      <template v-for="operation in buttons" :key="operation?.displaySymbol ?? ''">
+        <Button v-if="operation" :operation="operation" />
+        <div v-else></div>
+      </template>
     </section>
   </main>
 </template>

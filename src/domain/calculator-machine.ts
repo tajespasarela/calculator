@@ -1,72 +1,51 @@
-import { isOperator } from './type-guards';
+import { type ArithmeticExpression, BinaryOperation, Numeric } from './operations';
+import { isBinaryOperation } from './type-guards';
 
 export class CalculatorMachine {
-  private output: Array<string | number> = [];
-  private operators: Array<string> = [];
-  private precedence = ['+-', '*', '/'];
+  private output: ArithmeticExpression = [];
+  private operators: Array<BinaryOperation> = [];
 
-  private get lastOperator(): string | undefined {
+  private get lastOperator(): BinaryOperation | undefined {
     return this.operators.at(-1);
   }
 
-  private parseExpression(expression: Array<string | number>) {
-    expression.forEach((item) => {
-      if (isOperator(item)) {
-        if (!this.lastOperator || this.isHigherPrecedence(item, this.lastOperator)) {
-          this.operators.push(item);
+  private parseExpression(expression: ArithmeticExpression) {
+    expression.forEach((operation) => {
+      if (isBinaryOperation(operation)) {
+        if (!this.lastOperator || operation.priority > this.lastOperator.priority) {
+          this.operators.push(operation);
         } else {
           const removedLastOperator = this.operators.pop();
           if (removedLastOperator) {
             this.output.push(removedLastOperator);
           }
-          this.operators.push(item);
+          this.operators.push(operation);
         }
       } else {
-        this.output.push(item);
+        this.output.push(operation);
       }
     });
   }
 
-  resolve(expression: Array<string | number>): number {
+  resolve(expression: ArithmeticExpression): ArithmeticExpression {
     this.parseExpression(expression);
     this.output.push(...this.operators.reverse());
     this.operators.length = 0;
 
     while (this.output.length !== 1) {
-      const firstOperatorIndex = this.output.findIndex(isOperator);
-      const leftOperand = this.output[firstOperatorIndex - 2] as number;
-      const rightOperand = this.output[firstOperatorIndex - 1] as number;
-      const opeartor = this.output[firstOperatorIndex] as string;
+      const firstOperatorIndex = this.output.findIndex(isBinaryOperation);
+      const leftOperand = this.output[firstOperatorIndex - 2] as Numeric;
+      const rightOperand = this.output[firstOperatorIndex - 1] as Numeric;
+      const operator = this.output[firstOperatorIndex] as BinaryOperation;
 
       this.output.splice(
         firstOperatorIndex - 2,
         3,
-        this.operate(opeartor, leftOperand, rightOperand)
+        new Numeric(String(operator.operate(leftOperand, rightOperand)))
       );
     }
-    const result = this.output[0] as number;
+    const result = this.output[0] as Numeric;
     this.output.length = 0;
-    return result;
-  }
-
-  private isHigherPrecedence(operator1: string, operator2: string): boolean {
-    const precedence1 = this.precedence.findIndex((precedence) => precedence.includes(operator1));
-    const precedence2 = this.precedence.findIndex((precedence) => precedence.includes(operator2));
-    return precedence1 > precedence2;
-  }
-
-  private operate(opeartor: string, operandLeft: number, operandRight: number): number {
-    switch (opeartor) {
-      case '+':
-        return operandLeft + operandRight;
-      case '-':
-        return operandLeft - operandRight;
-      case '*':
-        return operandLeft * operandRight;
-      case '/':
-        return operandLeft / operandRight;
-      default:
-        throw new Error('Unknown operator');
-    }
+    return [result];
   }
 }
