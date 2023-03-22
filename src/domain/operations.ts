@@ -2,7 +2,7 @@ import { type Operation, type ArithmeticExpression, Numeric } from '@/domain/ent
 import { number0 } from '@/domain/numerics';
 import { CalculatorService } from '@/services/calculator.service';
 import { ref } from 'vue';
-import { isNumeric } from './type-guards';
+import { isBinaryOperation, isNumeric } from './type-guards';
 
 export const decimalPoint: Operation = {
   displaySymbol: '.',
@@ -22,6 +22,10 @@ export const equals = {
   displaySymbol: '=',
   keyboardBinding: 'Enter',
   modifyExpression(expression: ArithmeticExpression): ArithmeticExpression {
+    const lastOperation = expression.at(-1);
+    if (isBinaryOperation(lastOperation)) {
+      expression.pop();
+    }
     const resultExpression = calculatorService.resolve(expression);
     const result = resultExpression[0];
     if (
